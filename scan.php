@@ -45,12 +45,12 @@
 
 					//It is a folder
 					$folder[] = utf8_converter(array(
-						"_id" => (string)(new MongoId()),					// Dynamic Mongodb Id
-						"type" => "folder",									// Node type
-						"name" => $f,										// Folder name
-						"level"=> $level,									// Level height
-						"level_path" =>  $currentPath. '/' . $f,			// Level path as String
-						"level_path_array"=> $levelpath,					// Level path as array
+						"_id" => (string)(new MongoId()),			// Dynamic Mongodb Id
+						"type" => "folder",					// Node type
+						"name" => $f,						// Folder name
+						"level"=> $level,					// Level height
+						"level_path" =>  $currentPath. '/' . $f,		// Level path as String
+						"level_path_array"=> $levelpath,			// Level path as array
 						"childs" => sizeof(scandir($dir . '/' . $f)) - 2,	// Number of children
 					));
 
@@ -62,12 +62,12 @@
 
 					// It is a file
 					$file[] = utf8_converter(array(
-						"_id" => (string)(new MongoId()),			// Dynamic Mongodb Id
-						"type" => "file",							// Node type
-						"name" => $f,								// File name
-						"level" => $level,							// Level height
+						"_id" => (string)(new MongoId()),		// Dynamic Mongodb Id
+						"type" => "file",				// Node type
+						"name" => $f,					// File name
+						"level" => $level,				// Level height
 						"level_path" => $currentPath. '/' . $f,		// Level path as String
-						"level_path_array" => $levelpath,			// Level path as array
+						"level_path_array" => $levelpath,		// Level path as array
 						"file_extension" => end(explode('.', $f)), 	// File extension
 						"size" => filesize($dir . '/' . $f) 		// File size
 					));
@@ -76,23 +76,24 @@
 		}
 		//return;
 	}
-
-	$level = 1;
+	
+	//variables
 	$folder = array();
 	$file = array();
 	$collection_name = "directory_nodes";
 	$dir = $currentPath = "coffee";
+	
+	//Init All
+	scan($dir, $currentPath, $folder, $file, 0);
 
-	print_r(scan($dir, $currentPath, $folder, $file, 1));
-
-	//Folder
+	//Folder Mongo insert
 	foreach ($folder as $doc) {
 		$db->$collection_name->insert($doc);
 	}
 
-	//File
+	//File Mongo insert
 	foreach ($file as $doc) {
 		$db->$collection_name->insert($doc);
 	}
 
-	//echo "End!";
+	echo "End!";
